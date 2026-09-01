@@ -1,0 +1,30 @@
+
+=== Seed 0 ===
+Episode 00 | L=10 | U=200000
+  acc_center=0.9525, acc_outer=0.4211, gap=1.0901, ipm_raw=0.2654, ipm_soft=0.2735, jac_raw=0.003677, jac_soft=0.021567
+Episode 01 | L=20 | U=199990
+  acc_center=0.9529, acc_outer=0.4902, gap=0.9445, ipm_raw=0.5672, ipm_soft=0.5172, jac_raw=0.012498, jac_soft=0.089638
+Episode 02 | L=30 | U=199980
+  acc_center=0.9469, acc_outer=0.4493, gap=1.0202, ipm_raw=0.5316, ipm_soft=0.4140, jac_raw=0.010475, jac_soft=0.095793
+Episode 03 | L=40 | U=199970
+  acc_center=0.9484, acc_outer=0.4728, gap=0.9467, ipm_raw=0.5010, ipm_soft=0.4280, jac_raw=0.038349, jac_soft=0.168232
+Episode 04 | L=50 | U=199960
+  acc_center=0.9627, acc_outer=0.6386, gap=0.6022, ipm_raw=0.2109, ipm_soft=0.1886, jac_raw=0.088413, jac_soft=0.288666
+Episode 05 | L=60 | U=199950
+  acc_center=0.9538, acc_outer=0.5613, gap=0.7571, ipm_raw=0.1957, ipm_soft=0.1922, jac_raw=0.069229, jac_soft=0.224812
+Episode 06 | L=70 | U=199940
+  acc_center=0.9740, acc_outer=0.5965, gap=0.6043, ipm_raw=0.1402, ipm_soft=0.1561, jac_raw=0.123180, jac_soft=0.372855
+Episode 07 | L=80 | U=199930
+  acc_center=0.9490, acc_outer=0.5373, gap=0.6865, ipm_raw=0.2363, ipm_soft=0.1916, jac_raw=0.094570, jac_soft=0.326019
+Episode 08 | L=90 | U=199920
+
+=== Seed 0 ===
+Episode 00 | L=10 | U=200000
+  acc_center=0.9525, acc_outer=0.4211, gap=1.0901, ipm_raw=0.2654, ipm_soft=0.2735, jac_raw=0.003677, jac_soft=0.021567
+Episode 01 | L=20 | U=199990
+  acc_center=0.9529, acc_outer=0.4902, gap=0.9445, ipm_raw=0.5672, ipm_soft=0.5172, jac_raw=0.012498, jac_soft=0.089638
+Episode 02 | L=30 | U=199980
+  acc_center=0.9487, acc_outer=0.4513, gap=1.0190, ipm_raw=0.5335, ipm_soft=0.4138, jac_raw=0.010140, jac_soft=0.095006
+Episode 03 | L=40 | U=199970
+  acc_center=0.9495, acc_outer=0.4723, gap=0.9393, ipm_raw=0.5078, ipm_soft=0.4420, jac_raw=0.045562, jac_soft=0.185780
+Episode 04 | L=50 | U=199960

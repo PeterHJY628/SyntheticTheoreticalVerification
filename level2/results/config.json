@@ -1,0 +1,66 @@
+{
+  "spiral": {
+    "r_center_min": 0.02,
+    "r_center_max": 0.25,
+    "r_outer_min": 0.6,
+    "r_outer_max": 1.0,
+    "perturbation": 0.005,
+    "seed": 42
+  },
+  "al": {
+    "n_pool": 200000,
+    "n_eval_center": 200000,
+    "n_eval_outer": 200000,
+    "initial_labeled": 10,
+    "query_size": 10,
+    "n_episodes": 20,
+    "feature_dim": 2,
+    "num_classes": 2,
+    "classifier_max_steps": 5000,
+    "classifier_lr": 0.01,
+    "classifier_stale_patience": 200,
+    "classifier_tol": 1e-08,
+    "t_soft": 5.0,
+    "seed": 42,
+    "device": "cuda"
+  },
+  "critic": {
+    "hidden_dim": 64,
+    "critic_steps": 40000,
+    "critic_batch_size": 4096,
+    "critic_patience": 20,
+    "critic_lr": 0.001,
+    "critic_weight_decay": 0.0001,
+    "validation_interval": 2000,
+    "validation_size": 4096,
+    "critic_tolerance": 1e-05,
+    "population_batch_size": 65536,
+    "seed": 42
+  },
+  "seeds": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9
+  ],
+  "density_gap_r_mins": [
+    0.35,
+    0.45,
+    0.55,
+    0.65,
+    0.75
+  ],
+  "temperature_values": [
+    1.0,
+    2.0,
+    3.0,
+    5.0,
+    10.0
+  ]
+}
