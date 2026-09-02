@@ -153,27 +153,13 @@ def select_topk_by_critic(
     k: int = 10,
     batch_size: int = 65536,
 ) -> torch.Tensor:
-    """Return local indices into x_u with highest critic scores."""
+    """Return global top-k local indices into x_u."""
     critic.eval()
-    best_scores: torch.Tensor | None = None
-    best_indices: torch.Tensor | None = None
-
+    all_scores: list[torch.Tensor] = []
     for start in range(0, len(x_u), batch_size):
         end = min(start + batch_size, len(x_u))
-        scores = critic(x_u[start:end], p_u[start:end])
-        kk = min(k, len(scores))
-        values, idx = torch.topk(scores, k=kk)
-        idx = idx + start
-
-        if best_scores is None:
-            best_scores = values
-            best_indices = idx
-        else:
-            all_scores = torch.cat([best_scores, values])
-            all_indices = torch.cat([best_indices, idx])
-            kk = min(k, len(all_scores))
-            best_scores, order = torch.topk(all_scores, k=kk)
-            best_indices = all_indices[order]
-
-    assert best_indices is not None
-    return best_indices
+        all_scores.append(critic(x_u[start:end], p_u[start:end]))
+    scores = torch.cat(all_scores)
+    kk = min(k, len(scores))
+    _, idx = torch.topk(scores, k=kk)
+    return idx

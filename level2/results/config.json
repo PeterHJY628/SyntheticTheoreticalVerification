@@ -8,12 +8,12 @@
     "seed": 42
   },
   "al": {
-    "n_pool": 200000,
-    "n_eval_center": 200000,
-    "n_eval_outer": 200000,
+    "n_pool": 5000,
+    "n_eval_center": 20000,
+    "n_eval_outer": 20000,
     "initial_labeled": 10,
     "query_size": 10,
-    "n_episodes": 20,
+    "n_episodes": 2,
     "feature_dim": 2,
     "num_classes": 2,
     "classifier_max_steps": 5000,
@@ -26,7 +26,7 @@
   },
   "critic": {
     "hidden_dim": 64,
-    "critic_steps": 40000,
+    "critic_steps": 8000,
     "critic_batch_size": 4096,
     "critic_patience": 20,
     "critic_lr": 0.001,
@@ -38,16 +38,7 @@
     "seed": 42
   },
   "seeds": [
-    0,
-    1,
-    2,
-    3,
-    4,
-    5,
-    6,
-    7,
-    8,
-    9
+    0
   ],
   "density_gap_r_mins": [
     0.35,

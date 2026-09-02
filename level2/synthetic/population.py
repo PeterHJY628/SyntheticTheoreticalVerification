@@ -65,6 +65,22 @@ def sample_spiral_region(
     return x, y, r
 
 
+def _shuffle_population(
+    x: torch.Tensor,
+    y: torch.Tensor,
+    r: torch.Tensor | None,
+    seed: int,
+) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor | None]:
+    """Shuffle rows so balanced sampling does not leave classes in contiguous blocks."""
+    generator = torch.Generator(device="cpu")
+    generator.manual_seed(seed)
+    perm = torch.randperm(x.shape[0], generator=generator)
+    x_shuf = x[perm]
+    y_shuf = y[perm]
+    r_shuf = r[perm] if r is not None else None
+    return x_shuf, y_shuf, r_shuf
+
+
 def sample_class_balanced_center(
     n_per_class: int,
     spiral_cfg: SpiralConfig,
@@ -110,7 +126,9 @@ def generate_active_learning_data(
         seed=spiral_cfg.seed + 1,
         balanced=True,
     )
-    x_eval_center, y_eval_center, _ = sample_spiral_region(
+    x_pool, y_pool, r_pool = _shuffle_population(x_pool, y_pool, r_pool, seed=spiral_cfg.seed + 11)
+
+    x_eval_center, y_eval_center, r_ec = sample_spiral_region(
         al_cfg.n_eval_center,
         spiral_cfg.r_center_min,
         spiral_cfg.r_center_max,
@@ -118,13 +136,24 @@ def generate_active_learning_data(
         seed=spiral_cfg.seed + 2,
         balanced=True,
     )
-    x_eval_outer, y_eval_outer, _ = sample_spiral_region(
+    x_eval_center, y_eval_center, _ = _shuffle_population(
+        x_eval_center, y_eval_center, r_ec, seed=spiral_cfg.seed + 12
+    )
+
+    x_eval_outer, y_eval_outer, r_eo = sample_spiral_region(
         al_cfg.n_eval_outer,
         spiral_cfg.r_outer_min,
         spiral_cfg.r_outer_max,
         spiral_cfg.perturbation,
         seed=spiral_cfg.seed + 3,
         balanced=True,
+    )
+    x_eval_outer, y_eval_outer, _ = _shuffle_population(
+        x_eval_outer, y_eval_outer, r_eo, seed=spiral_cfg.seed + 13
+    )
+
+    x_initial, y_initial, _ = _shuffle_population(
+        x_initial, y_initial, None, seed=spiral_cfg.seed + 14
     )
 
     return {

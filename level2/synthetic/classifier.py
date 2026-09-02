@@ -41,14 +41,17 @@ def fit_classifier(
     torch.manual_seed(seed)
     model = MLPClassifier(feature_dim, num_classes).to(x_l.device)
     optimizer = torch.optim.Adam(model.parameters(), lr=lr)
-    targets = F.one_hot(y_l, num_classes=num_classes).float()
 
     previous = float("inf")
     stale = 0
     for _ in range(max_steps):
         model.train()
-        predictions = model(x_l)
-        loss = (predictions - targets).square().sum(dim=1).mean()
+        logits = model.forward_logits(x_l)
+        predictions = F.softmax(logits, dim=1)
+        targets_one_hot = F.one_hot(y_l, num_classes=num_classes).float()
+        loss = F.mse_loss(predictions, targets_one_hot, reduction="sum")
+        loss = loss / x_l.size(0)
+
         optimizer.zero_grad(set_to_none=True)
         loss.backward()
         optimizer.step()

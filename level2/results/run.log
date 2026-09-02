@@ -28,3 +28,68 @@ Episode 02 | L=30 | U=199980
 Episode 03 | L=40 | U=199970
   acc_center=0.9495, acc_outer=0.4723, gap=0.9393, ipm_raw=0.5078, ipm_soft=0.4420, jac_raw=0.045562, jac_soft=0.185780
 Episode 04 | L=50 | U=199960
+  acc_center=0.9643, acc_outer=0.5329, gap=0.8289, ipm_raw=0.2323, ipm_soft=0.1916, jac_raw=0.042946, jac_soft=0.262846
+Episode 05 | L=60 | U=199950
+  acc_center=0.9570, acc_outer=0.5623, gap=0.7488, ipm_raw=0.2059, ipm_soft=0.1766, jac_raw=0.060455, jac_soft=0.247912
+Episode 06 | L=70 | U=199940
+  acc_center=0.9740, acc_outer=0.5965, gap=0.6043, ipm_raw=0.1402, ipm_soft=0.1561, jac_raw=0.123180, jac_soft=0.372855
+Episode 07 | L=80 | U=199930
+  acc_center=0.9490, acc_outer=0.5373, gap=0.6865, ipm_raw=0.2363, ipm_soft=0.1916, jac_raw=0.094570, jac_soft=0.326019
+Episode 08 | L=90 | U=199920
+  acc_center=0.9698, acc_outer=0.7457, gap=0.3956, ipm_raw=0.1423, ipm_soft=0.1530, jac_raw=0.080632, jac_soft=0.332861
+Episode 09 | L=100 | U=199910
+  acc_center=0.9599, acc_outer=0.6337, gap=0.5925, ipm_raw=0.0844, ipm_soft=0.0939, jac_raw=0.065615, jac_soft=0.335648
+Episode 10 | L=110 | U=199900
+  acc_center=0.9597, acc_outer=0.6027, gap=0.6502, ipm_raw=0.2127, ipm_soft=0.1746, jac_raw=0.067197, jac_soft=0.279024
+Episode 11 | L=120 | U=199890
+  acc_center=0.9594, acc_outer=0.7086, gap=0.4206, ipm_raw=0.0898, ipm_soft=0.1068, jac_raw=0.115256, jac_soft=0.374618
+Episode 12 | L=130 | U=199880
+  acc_center=0.9710, acc_outer=0.6827, gap=0.5666, ipm_raw=0.1850, ipm_soft=0.1344, jac_raw=0.050027, jac_soft=0.272278
+Episode 13 | L=140 | U=199870
+  acc_center=0.9671, acc_outer=0.6640, gap=0.5477, ipm_raw=0.0880, ipm_soft=0.0893, jac_raw=0.071796, jac_soft=0.245961
+Episode 14 | L=150 | U=199860
+  acc_center=0.9562, acc_outer=0.8165, gap=0.2590, ipm_raw=0.1492, ipm_soft=0.1073, jac_raw=0.057992, jac_soft=0.297412
+Episode 15 | L=160 | U=199850
+  acc_center=0.9613, acc_outer=0.7683, gap=0.3578, ipm_raw=0.1329, ipm_soft=0.1127, jac_raw=0.051475, jac_soft=0.284654
+Episode 16 | L=170 | U=199840
+  acc_center=0.9534, acc_outer=0.7138, gap=0.3586, ipm_raw=0.0988, ipm_soft=0.1074, jac_raw=0.104690, jac_soft=0.336981
+Episode 17 | L=180 | U=199830
+  acc_center=0.9660, acc_outer=0.6938, gap=0.4884, ipm_raw=0.1447, ipm_soft=0.1014, jac_raw=0.057642, jac_soft=0.275210
+Episode 18 | L=190 | U=199820
+  acc_center=0.5000, acc_outer=0.7410, gap=-0.5013, ipm_raw=0.1439, ipm_soft=0.0918, jac_raw=0.051721, jac_soft=0.198509
+Episode 19 | L=200 | U=199810
+  acc_center=0.5000, acc_outer=0.6867, gap=-0.4409, ipm_raw=0.0799, ipm_soft=0.0764, jac_raw=0.055392, jac_soft=0.200207
+Episode 20 | L=210 | U=199800
+  acc_center=0.9621, acc_outer=0.8562, gap=0.1010, ipm_raw=0.1050, ipm_soft=0.0912, jac_raw=0.083971, jac_soft=0.324123
+Traceback (most recent call last):
+  File "/home/jiayuan/level2/run_experiment.py", line 194, in <module>
+  File "/home/jiayuan/level2/run_experiment.py", line 142, in main
+  File "/home/jiayuan/miniconda3/lib/python3.13/site-packages/pandas/core/generic.py", line 3988, in to_csv
+    return DataFrameRenderer(formatter).to_csv(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        path_or_buf,
+        ^^^^^^^^^^^^
+    ...<14 lines>...
+        storage_options=storage_options,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/jiayuan/miniconda3/lib/python3.13/site-packages/pandas/io/formats/format.py", line 1025, in to_csv
+    csv_formatter.save()
+    ~~~~~~~~~~~~~~~~~~^^
+  File "/home/jiayuan/miniconda3/lib/python3.13/site-packages/pandas/io/formats/csvs.py", line 251, in save
+    with get_handle(
+         ~~~~~~~~~~^
+        self.filepath_or_buffer,
+        ^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<4 lines>...
+        storage_options=self.storage_options,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ) as handles:
+    ^
+  File "/home/jiayuan/miniconda3/lib/python3.13/site-packages/pandas/io/common.py", line 793, in get_handle
+    check_parent_directory(str(handle))
+    ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "/home/jiayuan/miniconda3/lib/python3.13/site-packages/pandas/io/common.py", line 652, in check_parent_directory
+    raise OSError(rf"Cannot save file into a non-existent directory: '{parent}'")
+OSError: Cannot save file into a non-existent directory: '/home/jiayuan/level2/results'

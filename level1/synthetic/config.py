@@ -4,6 +4,13 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
+# Softmax temperature for IPM critic inputs (logits / T); matches dino_core.
+IPM_PROB_TEMPERATURE = 2.0
+
+CRITIC_SPECTRAL = "spectral"
+CRITIC_BILINEAR = "bilinear"
+CRITIC_TYPES = (CRITIC_SPECTRAL, CRITIC_BILINEAR, "both")
+
 
 @dataclass
 class PopulationConfig:
@@ -18,7 +25,10 @@ class PopulationConfig:
 
 @dataclass
 class CriticConfig:
-    hidden_dim: int = 2
+    critic_type: str = CRITIC_SPECTRAL
+    acquisition_critic: str = CRITIC_SPECTRAL
+    hidden_dim: int = 64
+    bilinear_rank: int = 32
     critic_steps: int = 1_000_000
     critic_batch_size: int = 1024
     critic_lr: float = 1e-3
@@ -38,7 +48,7 @@ class ActiveLearningConfig:
     initial_labeled: int = 10
     initial_sample_buffer: int = 100
     query_size: int = 10
-    n_episodes: int = 50
+    n_episodes: int = 20
     proxy_chunk_size: int = 4096
     feature_dim: int = 2
     num_classes: int = 2

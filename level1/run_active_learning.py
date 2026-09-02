@@ -17,10 +17,10 @@ if str(ROOT) not in sys.path:
 
 from synthetic.active_learning import run_active_learning, run_multi_seed
 from synthetic.config import ActiveLearningConfig, CriticConfig, PopulationConfig
-from synthetic.plotting import plot_trajectories
+from synthetic.plotting import plot_critic_training, plot_trajectories
 
 
-def save_results(rows: list[dict], output_dir: Path) -> pd.DataFrame:
+def save_results(rows: list[dict], output_dir: Path, critic_traces: list[dict] | None = None) -> pd.DataFrame:
     output_dir.mkdir(parents=True, exist_ok=True)
     df = pd.DataFrame(rows)
 
@@ -56,12 +56,19 @@ def save_results(rows: list[dict], output_dir: Path) -> pd.DataFrame:
 
     md_path = output_dir / "RESULTS.md"
     with md_path.open("w", encoding="utf-8") as handle:
-        handle.write("# Active Learning Synthetic Experiment (buildv2)\n\n")
+        handle.write("# Active Learning Synthetic Experiment (dino_core aligned)\n\n")
+        handle.write("- Classifier: raw logits + sum-reduced Brier MSE\n")
+        handle.write("- IPM input: temperature-softmax (T=2.0), detached\n")
+        if "critic_type" in df.columns:
+            handle.write(f"- Critic type: {df['critic_type'].iloc[0]}\n")
+        if "acquisition_critic" in df.columns:
+            handle.write(f"- Acquisition critic: {df['acquisition_critic'].iloc[0]}\n")
+        handle.write("\n")
         handle.write(f"- Seeds: {sorted(df['seed'].unique().tolist()) if 'seed' in df.columns else [df.iloc[0].get('seed', 'N/A')]}\n")
         handle.write(f"- Episodes: 0–{int(df['episode'].max())}\n")
         handle.write(f"- Final labeled: {int(df.groupby('seed')['n_labeled'].max().mean()) if 'seed' in df.columns else int(df['n_labeled'].max())}\n\n")
-        handle.write("| episode | n_labeled | accuracy | true_risk_gap | ipm | ld | fd | gc | bound_slack | moment_gap_fro |\n")
-        handle.write("|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|\n")
+        handle.write("| episode | n_labeled | accuracy | true_risk_gap | ipm | ld | fd | gc | bound_slack | moment_gap_fro | critic_steps | critic_converged |\n")
+        handle.write("|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|:---:|\n")
 
         if "seed" in df.columns and df["seed"].nunique() > 1:
             summary = df.groupby("episode").mean(numeric_only=True)
@@ -71,7 +78,9 @@ def save_results(rows: list[dict], output_dir: Path) -> pd.DataFrame:
                     f"{row['accuracy']:.4f} | {row['true_risk_gap']:.6f} | "
                     f"{row['ipm']:.6f} | {row['ld']:.6f} | {row['fd']:.6f} | "
                     f"{row['gc']:.6f} | {row['bound_slack']:.6f} | "
-                    f"{row['moment_gap_fro']:.6f} |\n"
+                    f"{row['moment_gap_fro']:.6f} | "
+                    f"{int(row.get('critic_steps', 0))} | "
+                    f"{bool(row.get('critic_converged', False))} |\n"
                 )
         else:
             for _, row in df.iterrows():
@@ -80,10 +89,14 @@ def save_results(rows: list[dict], output_dir: Path) -> pd.DataFrame:
                     f"{row['accuracy']:.4f} | {row['true_risk_gap']:.6f} | "
                     f"{row['ipm']:.6f} | {row['ld']:.6f} | {row['fd']:.6f} | "
                     f"{row['gc']:.6f} | {row['bound_slack']:.6f} | "
-                    f"{row['moment_gap_fro']:.6f} |\n"
+                    f"{row['moment_gap_fro']:.6f} | "
+                    f"{int(row.get('critic_steps', 0))} | "
+                    f"{bool(row.get('critic_converged', False))} |\n"
                 )
 
     plot_trajectories(df, output_dir)
+    if critic_traces:
+        plot_critic_training(critic_traces, output_dir)
     return df
 
 
@@ -99,13 +112,26 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument("--n-pool", type=int, default=1_000_000)
     parser.add_argument("--n-test", type=int, default=1_000_000)
-    parser.add_argument("--n-episodes", type=int, default=50)
+    parser.add_argument("--n-episodes", type=int, default=20)
     parser.add_argument("--query-size", type=int, default=10)
     parser.add_argument("--initial-labeled", type=int, default=10)
     parser.add_argument("--rotation-deg", type=float, default=60.0)
     parser.add_argument("--scale-x", type=float, default=4.0)
     parser.add_argument("--scale-y", type=float, default=0.25)
-    parser.add_argument("--hidden-dim", type=int, default=2)
+    parser.add_argument("--hidden-dim", type=int, default=64)
+    parser.add_argument("--bilinear-rank", type=int, default=32)
+    parser.add_argument(
+        "--critic-type",
+        choices=("spectral", "bilinear", "both"),
+        default="spectral",
+        help="Critic architecture; 'both' trains spectral and bilinear each episode",
+    )
+    parser.add_argument(
+        "--acquisition-critic",
+        choices=("spectral", "bilinear"),
+        default="spectral",
+        help="Primary IPM column and acquisition critic when --critic-type=both",
+    )
     parser.add_argument("--critic-steps", type=int, default=1_000_000)
     parser.add_argument("--proxy-chunk-size", type=int, default=4096)
     parser.add_argument(
@@ -142,17 +168,20 @@ def main() -> None:
         device=args.device,
     )
     critic_cfg = CriticConfig(
+        critic_type=args.critic_type,
+        acquisition_critic=args.acquisition_critic,
         hidden_dim=args.hidden_dim,
+        bilinear_rank=args.bilinear_rank,
         critic_steps=args.critic_steps,
         seed=seeds[0],
     )
 
     if len(seeds) == 1:
-        rows = run_active_learning(pop_cfg, al_cfg, critic_cfg)
+        rows, critic_traces = run_active_learning(pop_cfg, al_cfg, critic_cfg)
     else:
-        rows = run_multi_seed(pop_cfg, al_cfg, critic_cfg, seeds)
+        rows, critic_traces = run_multi_seed(pop_cfg, al_cfg, critic_cfg, seeds)
 
-    df = save_results(rows, args.output_dir)
+    df = save_results(rows, args.output_dir, critic_traces=critic_traces)
     print(f"\nSaved results and plots to {args.output_dir}")
     print(
         df[
